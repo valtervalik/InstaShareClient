@@ -8,16 +8,13 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 export default function LoginForm() {
   const loginMutation = useLogin();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginInputs>({
+  const { register, handleSubmit } = useForm<LoginInputs>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit: SubmitHandler<LoginInputs> = (data) =>
     loginMutation.mutate(data);
+
   return (
     <form className='grid gap-3 py-3 px-5' onSubmit={handleSubmit(onSubmit)}>
       <TextField

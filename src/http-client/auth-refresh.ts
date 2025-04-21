@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { client, setHeaderToken } from './client';
 
 export const fetchNewToken = async () => {
@@ -15,7 +15,6 @@ export const fetchNewToken = async () => {
 
 export const useAuthRefresh = async (failedRequest: any) => {
   const newToken = await fetchNewToken();
-  const router = useRouter();
 
   if (newToken) {
     failedRequest.response.config.headers.Authorization = 'Bearer ' + newToken;
@@ -25,7 +24,7 @@ export const useAuthRefresh = async (failedRequest: any) => {
     return Promise.resolve(newToken);
   } else {
     // you can redirect to login page here
-    router.push('/login');
-    return Promise.reject();
+
+    return Promise.reject().then(redirect('/login'));
   }
 };
