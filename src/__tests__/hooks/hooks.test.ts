@@ -30,11 +30,16 @@ beforeAll(() => {
   });
 });
 
-// create a non-JSX wrapper for tests
+// create a non-JSX wrapper for tests with a displayName for ESLint
 const createWrapper = () => {
   const client = new QueryClient();
-  return ({ children }: { children: React.ReactNode }) =>
+
+  // Named wrapper component to satisfy react/display-name rule
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     React.createElement(QueryClientProvider, { client }, children);
+  Wrapper.displayName = 'QueryClientProviderWrapper';
+
+  return Wrapper;
 };
 
 describe('Custom hooks', () => {

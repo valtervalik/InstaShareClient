@@ -17,7 +17,7 @@ import { useGetUpdatedUploadStatus } from '@/queries/hooks/explorer/file/useGetU
 import { useGetCurrentUser } from '@/queries/hooks/user/useGetCurrentUser';
 import { useFileCategoryStore } from '@/store/useFileCategoryStore';
 import { useFileStore } from '@/store/useFileStore';
-import { usesessionStore } from '@/store/useSessionStore';
+import { useSessionStore } from '@/store/useSessionStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { FilePlus, FolderPen, FolderX, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -32,7 +32,7 @@ const FolderPage = () => {
   const setJobId = useFileStore((state) => state.setJobId);
   const { data: uploadStatus } = useGetUpdatedUploadStatus(jobId);
   const { data } = useGetCurrentUser();
-  const setSession = usesessionStore((state) => state.setSession);
+  const setSession = useSessionStore((state) => state.setSession);
   const fileCategory = useFileCategoryStore((state) => state.fileCategory);
   const deleteCategory = useDeleteFileCategory(fileCategory?._id || '');
 
@@ -58,13 +58,13 @@ const FolderPage = () => {
         setJobId(null);
       }
     }
-  }, [uploadStatus]);
+  }, [uploadStatus, queryClient, setJobId]);
 
   useEffect(() => {
     if (data) {
       setSession(data);
     }
-  }, [data]);
+  }, [data, setSession]);
 
   return (
     <section className=' pt-20 w-full'>

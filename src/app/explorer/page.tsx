@@ -1,20 +1,18 @@
 'use client';
 import { useGetCurrentUser } from '@/queries/hooks/user/useGetCurrentUser';
-
-import { usesessionStore } from '@/store/useSessionStore';
-
+import { useSessionStore } from '@/store/useSessionStore';
 import { useEffect } from 'react';
 
 const ExplorerPage = () => {
   const { data } = useGetCurrentUser();
-  const setSession = usesessionStore((state) => state.setSession);
+  const setSession = useSessionStore((state) => state.setSession);
   const currentUser = useGetCurrentUser();
 
   useEffect(() => {
     if (data) {
       setSession(data);
     }
-  }, [data]);
+  }, [data, setSession]);
 
   return (
     <section className='w-full h-screen flex flex-col items-center justify-center'>

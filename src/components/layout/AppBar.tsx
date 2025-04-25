@@ -1,6 +1,6 @@
 'use client';
 import { client } from '@/http-client/client';
-import { usesessionStore } from '@/store/useSessionStore';
+import { useSessionStore } from '@/store/useSessionStore';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { useQueryClient } from '@tanstack/react-query';
 import { LogOut } from 'lucide-react';
@@ -15,8 +15,8 @@ const AppBar = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const setSession = usesessionStore((state) => state.setSession);
-  const session = usesessionStore((state) => state.session);
+  const setSession = useSessionStore((state) => state.setSession);
+  const session = useSessionStore((state) => state.session);
 
   return (
     <section className='fixed top-0 left-0 w-full p-3'>
