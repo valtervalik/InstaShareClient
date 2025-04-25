@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import { client, setHeaderToken } from './client';
 
 export const fetchNewToken = async () => {
@@ -23,8 +22,13 @@ export const useAuthRefresh = async (failedRequest: any) => {
     // setToken({ token: newToken });
     return Promise.resolve(newToken);
   } else {
-    // you can redirect to login page here
-
-    return Promise.reject().then(redirect('/login'));
+    // redirect to login page without polluting history
+    if (typeof window !== 'undefined') {
+      // only redirect if not already on login to avoid loops
+      if (window.location.pathname !== '/login') {
+        window.location.replace('/login');
+      }
+    }
+    return Promise.reject();
   }
 };
