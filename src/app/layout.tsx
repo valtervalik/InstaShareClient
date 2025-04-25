@@ -1,3 +1,4 @@
+import AppBar from '@/components/layout/AppBar';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Roboto } from 'next/font/google';
 import './globals.css';
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   description: 'Upload your files and share them with others easily',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -35,7 +36,12 @@ export default function RootLayout({
       <body
         className={`${roboto.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className='h-full w-full'>
+            <AppBar />
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

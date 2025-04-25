@@ -1,20 +1,15 @@
-// In Next.js, this file would be called: app/providers.jsx
 'use client';
 
-import theme from '@/theme';
-// Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
-import CloseIcon from '@mui/icons-material/Close';
-import { Button, ThemeProvider } from '@mui/material';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { Button } from '@/components/ui/button';
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import { CircleX } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { closeSnackbar, SnackbarKey, SnackbarProvider } from 'notistack';
 
-// Dynamically load ReactQueryDevtools only on client to avoid build-time chunk errors
 const ReactQueryDevtools = dynamic(
   () =>
     import('@tanstack/react-query-devtools').then(
@@ -27,8 +22,6 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
         staleTime: 60 * 1000,
       },
     },
@@ -39,13 +32,8 @@ let browserQueryClient: QueryClient | undefined = undefined;
 
 function getQueryClient() {
   if (isServer) {
-    // Server: always make a new query client
     return makeQueryClient();
   } else {
-    // Browser: make a new query client if we don't already have one
-    // This is very important, so we don't re-make a new client if React
-    // suspends during the initial render. This may not be needed if we
-    // have a suspense boundary BELOW the creation of the query client
     if (!browserQueryClient) browserQueryClient = makeQueryClient();
     return browserQueryClient;
   }
@@ -54,11 +42,12 @@ function getQueryClient() {
 const action = (snackbarId: SnackbarKey) => (
   <>
     <Button
+      className='bg-transparent hover:bg-transparent text-white cursor-pointer'
       onClick={() => {
         closeSnackbar(snackbarId);
       }}
     >
-      <CloseIcon className='text-white' />
+      <CircleX size={'lg'} />
     </Button>
   </>
 );
@@ -68,19 +57,11 @@ export default function Providers({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // NOTE: Avoid useState when initializing the query client if you don't
-  //       have a suspense boundary between this and the code that may
-  //       suspend because React will throw away the client on the initial
-  //       render if it suspends and there is no boundary
   const queryClient = getQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-        <ThemeProvider theme={theme}>
-          <SnackbarProvider action={action}>{children}</SnackbarProvider>
-        </ThemeProvider>
-      </AppRouterCacheProvider>
+      <SnackbarProvider action={action}>{children}</SnackbarProvider>
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}

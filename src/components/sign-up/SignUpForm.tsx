@@ -1,6 +1,6 @@
 'use client';
-import { useLogin } from '@/queries/hooks/login/useLogin';
-import { LoginInputs, loginSchema } from '@/schemas/login/login.schema';
+import { useSignUp } from '@/queries/hooks/sign-up/useSignUp';
+import { SignUpInputs, signUpSchema } from '@/schemas/sign-up/sign-up.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Button } from '../ui/button';
@@ -14,16 +14,16 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 
-export default function LoginForm() {
-  const loginMutation = useLogin();
+export default function SignUpForm() {
+  const signUpMutation = useSignUp();
 
-  const form = useForm<LoginInputs>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+  const form = useForm<SignUpInputs>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: { email: '', password: '', confirmPassword: '' },
   });
 
-  const onSubmit: SubmitHandler<LoginInputs> = (data) =>
-    loginMutation.mutate(data);
+  const onSubmit: SubmitHandler<SignUpInputs> = (data) =>
+    signUpMutation.mutate(data);
 
   return (
     <Form {...form}>
@@ -47,6 +47,19 @@ export default function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder='Password' type='password' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='confirmPassword'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <Input placeholder='Password' type='password' {...field} />
               </FormControl>
