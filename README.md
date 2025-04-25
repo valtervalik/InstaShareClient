@@ -31,17 +31,17 @@ pnpm install
 ```
 
 3. Configure Environment Variables
-Create a .env.local file in the root of the project and define the required environment variables. Below is an example:
+Make a copy of .env.example:
 
-env
-NEXT_PUBLIC_API_URL=http://your-api-url
-Replace http://your-api-url with the actual API URL.
+```bash
+cp .env.example .env
+```
 
 4. Run the Development Server
 Start the development server with the following command:
 
 ```bash
-pnpm run dev
+pnpm dev
 ```
 The application will be accessible at http://localhost:3000.
 
@@ -52,7 +52,7 @@ To build and run the application in production mode, follow these steps:
 Generate the production build:
 
 ```bash
-pnpm run build
+pnpm build
 ```
 
 2. Start the Production Server
