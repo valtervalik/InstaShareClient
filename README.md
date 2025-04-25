@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# InstaShareClient Setup Guide
 
-## Getting Started
+This guide provides step-by-step instructions to set up and run the InstaShareClient project.
 
-First, run the development server:
+## Prerequisites
 
+Before setting up the project, ensure you have the following installed on your system:
+
+1. **Node.js** (version 16 or newer) - [Download Node.js](https://nodejs.org/)
+2. **pnpm** (latest)
+
+## Steps to Set Up the Project
+
+Follow these steps to get the project up and running:
+
+### 1. Clone the Repository
+Clone the repository to your local machine using the following command:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/valtervalik/InstaShareClient.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Navigate into the project directory:
+```bash
+cd InstaShareClient
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Install Dependencies
+Install the required dependencies by running:
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Configure Environment Variables
+Create a .env.local file in the root of the project and define the required environment variables. Below is an example:
 
-## Learn More
+env
+NEXT_PUBLIC_API_URL=http://your-api-url
+Replace http://your-api-url with the actual API URL.
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the Development Server
+Start the development server with the following command:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm run dev
+```
+The application will be accessible at http://localhost:3000.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Building and Running for Production
+To build and run the application in production mode, follow these steps:
 
-## Deploy on Vercel
+1. Build the Application
+Generate the production build:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm run build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Start the Production Server
+Run the production server:
+
+```bash
+pnpm start
+```
+The application will be available at http://localhost:3000.
+
+Additional Notes
+Refer to the package.json file for additional scripts and commands.
+Ensure the required environment variables are properly configured before running the application.
