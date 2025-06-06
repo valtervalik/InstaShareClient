@@ -1,14 +1,12 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Toaster } from '@/components/ui/sonner';
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { CircleX } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { closeSnackbar, SnackbarKey, SnackbarProvider } from 'notistack';
 
 const ReactQueryDevtools = dynamic(
   () =>
@@ -39,19 +37,6 @@ function getQueryClient() {
   }
 }
 
-const action = (snackbarId: SnackbarKey) => (
-  <>
-    <Button
-      className='bg-transparent hover:bg-transparent text-white cursor-pointer'
-      onClick={() => {
-        closeSnackbar(snackbarId);
-      }}
-    >
-      <CircleX size={'lg'} />
-    </Button>
-  </>
-);
-
 export default function Providers({
   children,
 }: Readonly<{
@@ -61,7 +46,8 @@ export default function Providers({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SnackbarProvider action={action}>{children}</SnackbarProvider>
+      {children}
+      <Toaster richColors position='bottom-center' expand />
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}

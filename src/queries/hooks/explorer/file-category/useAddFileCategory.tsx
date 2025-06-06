@@ -5,7 +5,7 @@ import { FileCategory } from '@/interfaces/explorer/file-category/file-category.
 import { FileCategoryInputs } from '@/schemas/explorer/file-category/file-category.schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { enqueueSnackbar } from 'notistack';
+import { toast } from 'sonner';
 import { MutationKeys, QueryKeys } from '../../../constants.enum';
 
 export const useAddFileCategory = () => {
@@ -19,15 +19,13 @@ export const useAddFileCategory = () => {
           .post('/file-categories', category, { withCredentials: true })
           .then((res) => res.data),
       onSuccess: (data) => {
-        enqueueSnackbar(data.message, { variant: 'success' });
+        toast.success(data.message);
         queryClient.invalidateQueries({
           queryKey: [QueryKeys.FILE_CATEGORIES_KEY],
         });
       },
       onError: () => {
-        enqueueSnackbar('Error when adding the category', {
-          variant: 'error',
-        });
+        toast.error('Failed to add file category. Please try again.');
       },
     }
   );

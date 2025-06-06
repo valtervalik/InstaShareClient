@@ -3,15 +3,12 @@ import { client } from '@/http-client/client';
 import { ApiResponse } from '@/interfaces/api-response.interface';
 import { Job } from '@/interfaces/explorer/file/job.interface';
 import { FileInputs } from '@/schemas/explorer/file/file.schema';
-import { useFileStore } from '@/store/useFileStore';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { enqueueSnackbar } from 'notistack';
+import { toast } from 'sonner';
 import { MutationKeys } from '../../../constants.enum';
 
 export const useUploadFile = () => {
-  const setJobId = useFileStore((state) => state.setJobId);
-
   return useMutation<ApiResponse<Job>, AxiosError, FileInputs>({
     mutationKey: [MutationKeys.UPLOAD_FILE_KEY],
     mutationFn: async (file: FileInputs) => {
@@ -27,13 +24,10 @@ export const useUploadFile = () => {
         .then((res) => res.data);
     },
     onSuccess: (data) => {
-      enqueueSnackbar(data.message, { variant: 'success' });
-      setJobId(data.data.jobId);
+      toast.success(data.message);
     },
     onError: () => {
-      enqueueSnackbar('Something went wrong', {
-        variant: 'error',
-      });
+      toast.error('Failed to upload file. Please try again.');
     },
   });
 };
