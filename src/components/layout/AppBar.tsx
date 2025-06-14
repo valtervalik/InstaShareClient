@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { enqueueSnackbar } from 'notistack';
+import { toast } from 'sonner';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipProvider } from '../ui/tooltip';
@@ -43,7 +43,7 @@ const AppBar = () => {
                 client
                   .get('/auth/logout', { withCredentials: true })
                   .then((res) => {
-                    enqueueSnackbar(res.data.message, { variant: 'success' });
+                    toast.success(res.data.message);
                     queryClient.invalidateQueries({
                       refetchType: 'all',
                     });

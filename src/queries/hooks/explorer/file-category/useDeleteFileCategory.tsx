@@ -3,7 +3,7 @@ import { client } from '@/http-client/client';
 import { ApiResponse } from '@/interfaces/api-response.interface';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { enqueueSnackbar } from 'notistack';
+import { toast } from 'sonner';
 import { MutationKeys, QueryKeys } from '../../../constants.enum';
 
 export const useDeleteFileCategory = (id: string) => {
@@ -16,15 +16,13 @@ export const useDeleteFileCategory = (id: string) => {
         .delete(`/file-categories/${id}`, { withCredentials: true })
         .then((res) => res.data),
     onSuccess: (data) => {
-      enqueueSnackbar(data.message, { variant: 'success' });
+      toast.success(data.message);
       queryClient.invalidateQueries({
         queryKey: [QueryKeys.FILE_CATEGORIES_KEY],
       });
     },
     onError: () => {
-      enqueueSnackbar('Error when deleting the folder', {
-        variant: 'error',
-      });
+      toast.error('Failed to delete file category. Please try again.');
     },
   });
 };

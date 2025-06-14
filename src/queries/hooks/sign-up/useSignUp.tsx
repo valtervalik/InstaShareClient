@@ -6,7 +6,7 @@ import { SignUpInputs } from '@/schemas/sign-up/sign-up.schema';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { enqueueSnackbar } from 'notistack';
+import { toast } from 'sonner';
 import { MutationKeys } from '../../constants.enum';
 
 export const useSignUp = () => {
@@ -20,12 +20,10 @@ export const useSignUp = () => {
         .then((res) => res.data),
     onSuccess: (data) => {
       router.push('/login');
-      enqueueSnackbar(data.message, { variant: 'success' });
+      toast.success(data.message);
     },
     onError: () => {
-      enqueueSnackbar('Something went wrong', {
-        variant: 'error',
-      });
+      toast.error('Failed to sign up. Please try again.');
     },
   });
 };

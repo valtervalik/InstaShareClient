@@ -11,54 +11,51 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { API_URL } from '@/http-client/client';
 import { QueryKeys } from '@/queries/constants.enum';
 import { useDeleteFileCategory } from '@/queries/hooks/explorer/file-category/useDeleteFileCategory';
-import { useGetUpdatedUploadStatus } from '@/queries/hooks/explorer/file/useGetUpdatedUploadStatus';
 import { useGetCurrentUser } from '@/queries/hooks/user/useGetCurrentUser';
 import { useFileCategoryStore } from '@/store/useFileCategoryStore';
-import { useFileStore } from '@/store/useFileStore';
 import { useSessionStore } from '@/store/useSessionStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { FilePlus, FolderPen, FolderX, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const FolderPage = () => {
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const jobId = useFileStore((state) => state.jobId);
-  const setJobId = useFileStore((state) => state.setJobId);
-  const { data: uploadStatus } = useGetUpdatedUploadStatus(jobId);
   const { data } = useGetCurrentUser();
   const setSession = useSessionStore((state) => state.setSession);
   const fileCategory = useFileCategoryStore((state) => state.fileCategory);
   const deleteCategory = useDeleteFileCategory(fileCategory?._id || '');
 
-  const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (uploadStatus) {
-      enqueueSnackbar(`Progress: ${uploadStatus.data.progress}%`, {
-        variant: 'info',
-      });
-      if (uploadStatus.data.status === 'completed') {
-        queryClient.invalidateQueries({ queryKey: [QueryKeys.FILES_KEY] });
-        enqueueSnackbar(`Upload ${uploadStatus.data.status}`, {
-          variant: 'success',
-        });
-        setJobId(null);
-      } else if (uploadStatus.data.status === 'failed') {
-        enqueueSnackbar(uploadStatus.message, {
-          variant: 'error',
-        });
-        setJobId(null);
-      }
-    }
-  }, [uploadStatus, queryClient, setJobId]);
+    const eventSource = new EventSource(`${API_URL}/files/sse`);
+    eventSource.onmessage = async ({ data }) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.FILES_KEY],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.FILE_CATEGORIES_KEY],
+        }),
+      ]);
+
+      const { message } = JSON.parse(data);
+      toast.success(message);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   useEffect(() => {
     if (data) {

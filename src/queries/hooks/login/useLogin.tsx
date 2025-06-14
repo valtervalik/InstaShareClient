@@ -6,7 +6,7 @@ import { LoginInputs } from '@/schemas/login/login.schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import { enqueueSnackbar } from 'notistack';
+import { toast } from 'sonner';
 import { MutationKeys } from '../../constants.enum';
 
 export const useLogin = () => {
@@ -22,15 +22,13 @@ export const useLogin = () => {
     onSuccess: (data) => {
       setHeaderToken(data.data.accessToken);
       router.push('/explorer');
-      enqueueSnackbar(data.message, { variant: 'success' });
+      toast.success(data.message);
       queryClient.invalidateQueries({
         refetchType: 'all',
       });
     },
     onError: () => {
-      enqueueSnackbar('Invalid credentials', {
-        variant: 'error',
-      });
+      toast.error('Invalid credentials');
     },
   });
 };

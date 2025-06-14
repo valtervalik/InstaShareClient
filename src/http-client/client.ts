@@ -2,8 +2,10 @@ import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { useAuthRefresh } from './auth-refresh';
 
+export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export const client = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: API_URL,
   withCredentials: true,
 });
 
