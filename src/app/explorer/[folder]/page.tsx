@@ -38,6 +38,7 @@ const FolderPage = () => {
 
   useEffect(() => {
     const eventSource = new EventSource(`${API_URL}/files/sse`);
+
     eventSource.onmessage = async ({ data }) => {
       await Promise.all([
         queryClient.invalidateQueries({
@@ -50,6 +51,10 @@ const FolderPage = () => {
 
       const { message } = JSON.parse(data);
       toast.success(message);
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('EventSource failed:', error);
     };
 
     return () => {
