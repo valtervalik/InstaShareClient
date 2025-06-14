@@ -10,6 +10,7 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { client } from '@/http-client/client';
 import type { File as FileModel } from '@/interfaces/explorer/file/file.interface';
+import { FileStatusEnum } from '@/lib/constants/files.enum';
 import { useDeleteFile } from '@/queries/hooks/explorer/file/useDeleteFile';
 import { useGetFilesByCategory } from '@/queries/hooks/explorer/file/useGetFilesByCategory';
 import { useFileCategoryStore } from '@/store/useFileCategoryStore';
@@ -94,10 +95,13 @@ const Files = () => {
           <DialogDescription>
             Size: {byteSize(file.size).value} {byteSize(file.size).unit}
           </DialogDescription>
-          <DialogDescription>
-            Compressed Size: {byteSize(file.compressedSize).value}{' '}
-            {byteSize(file.compressedSize).unit}
-          </DialogDescription>
+          <DialogDescription>Status: {file.status}</DialogDescription>
+          {file.status === FileStatusEnum.COMPRESSED && (
+            <DialogDescription>
+              Compressed Size: {byteSize(file.compressedSize).value}{' '}
+              {byteSize(file.compressedSize).unit}
+            </DialogDescription>
+          )}
           <DialogFooter>
             <Button onClick={handleDownload}>Download</Button>
             <Button onClick={() => setOpenEdit(true)} variant='outline'>
