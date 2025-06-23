@@ -38,31 +38,59 @@ const FolderPage = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const eventSource = new EventSource(`${API_URL}/files/sse?token=${token}`);
+    let eventSource: EventSource | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+    let isComponentMounted = true;
 
-    eventSource.onmessage = async ({ data }) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: [QueryKeys.FILES_KEY],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [QueryKeys.FILE_CATEGORIES_KEY],
-        }),
-      ]);
+    const createEventSource = () => {
+      if (!isComponentMounted) return;
 
-      const { message } = JSON.parse(data);
-      toast.success(message);
+      eventSource = new EventSource(`${API_URL}/files/sse?token=${token}`);
+
+      eventSource.onmessage = async ({ data }) => {
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.FILES_KEY],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [QueryKeys.FILE_CATEGORIES_KEY],
+          }),
+        ]);
+
+        const { message } = JSON.parse(data);
+        toast.success(message);
+      };
+
+      eventSource.onerror = (error) => {
+        if (eventSource?.readyState === EventSource.CLOSED) {
+          toast.error('Connection lost. Attempting to reconnect...');
+
+          // Attempt to reconnect after 3 seconds
+          reconnectTimeout = setTimeout(() => {
+            if (isComponentMounted) {
+              createEventSource();
+            }
+          }, 3000);
+        }
+      };
+
+      eventSource.onopen = () => {
+        console.log('EventSource connection established');
+      };
     };
 
-    eventSource.onerror = (error) => {
-      toast.error('EventSource error');
-      console.log(error);
-    };
+    createEventSource();
 
     return () => {
-      eventSource.close();
+      isComponentMounted = false;
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+      if (eventSource) {
+        eventSource.close();
+      }
     };
-  }, []);
+  }, [token, queryClient]);
 
   useEffect(() => {
     if (data) {
