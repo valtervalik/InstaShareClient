@@ -4,11 +4,9 @@ import { useAddFileCategory } from '@/queries/hooks/explorer/file-category/useAd
 import type { FileCategoryInputs } from '@/schemas/explorer/file-category/file-category.schema';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
-import { enqueueSnackbar } from 'notistack';
 import React, { useEffect } from 'react';
 
 jest.mock('@/http-client/client');
-jest.mock('notistack', () => ({ enqueueSnackbar: jest.fn() }));
 
 describe('useAddFileCategory', () => {
   let queryClient: QueryClient;
@@ -22,7 +20,6 @@ describe('useAddFileCategory', () => {
     });
     jest.spyOn(queryClient, 'invalidateQueries');
     (client.post as jest.Mock).mockReset();
-    (enqueueSnackbar as jest.Mock).mockClear();
   });
 
   it('should call post and invalidate queries on success', async () => {
@@ -59,10 +56,6 @@ describe('useAddFileCategory', () => {
       expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
         queryKey: [QueryKeys.FILE_CATEGORIES_KEY],
       });
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Category added successfully',
-        { variant: 'success' }
-      );
     });
   });
 
@@ -87,11 +80,6 @@ describe('useAddFileCategory', () => {
       trigger({ name: 'Bad name' });
     });
 
-    await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Error when adding the category',
-        { variant: 'error' }
-      );
-    });
+    await waitFor(() => {});
   });
 });

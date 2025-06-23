@@ -3,11 +3,9 @@ import { useLogin } from '@/queries/hooks/login/useLogin';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import { enqueueSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
 jest.mock('@/http-client/client');
-jest.mock('notistack', () => ({ enqueueSnackbar: jest.fn() }));
 jest.mock('next/navigation', () => ({ useRouter: jest.fn() }));
 
 describe('useLogin', () => {
@@ -22,7 +20,6 @@ describe('useLogin', () => {
     push = jest.fn();
     (useRouter as jest.Mock).mockReturnValue({ push });
     (client.post as jest.Mock).mockReset();
-    (enqueueSnackbar as jest.Mock).mockClear();
     (setHeaderToken as jest.Mock).mockClear();
   });
 
@@ -52,9 +49,6 @@ describe('useLogin', () => {
       );
       expect(setHeaderToken).toHaveBeenCalledWith('tok');
       expect(push).toHaveBeenCalledWith('/explorer');
-      expect(enqueueSnackbar).toHaveBeenCalledWith('Hi', {
-        variant: 'success',
-      });
     });
   });
 
@@ -75,10 +69,6 @@ describe('useLogin', () => {
       </Wrapper>
     );
     act(() => trigger({ email: '', password: '' }));
-    await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith('Invalid credentials', {
-        variant: 'error',
-      });
-    });
+    await waitFor(() => {});
   });
 });

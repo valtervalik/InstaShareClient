@@ -4,7 +4,6 @@ import { useGetFileCategories } from '@/queries/hooks/explorer/file-category/use
 import { useDeleteFile } from '@/queries/hooks/explorer/file/useDeleteFile';
 import { useEditFile } from '@/queries/hooks/explorer/file/useEditFile';
 import { useGetFilesByCategory } from '@/queries/hooks/explorer/file/useGetFilesByCategory';
-import { useGetUpdatedUploadStatus } from '@/queries/hooks/explorer/file/useGetUpdatedUploadStatus';
 import { useUploadFile } from '@/queries/hooks/explorer/file/useUploadFile';
 import { useLogin } from '@/queries/hooks/login/useLogin';
 import { useSignUp } from '@/queries/hooks/sign-up/useSignUp';
@@ -71,7 +70,6 @@ describe('Custom hooks', () => {
     useUploadFile,
     () => useDeleteFile('mock-id'),
     useEditFile,
-    useGetUpdatedUploadStatus,
     useGetFilesByCategory,
   ].forEach((hook) => {
     it(`${hook.name} returns query/mutation object`, () => {

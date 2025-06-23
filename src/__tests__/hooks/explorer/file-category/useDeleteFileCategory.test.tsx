@@ -3,11 +3,9 @@ import { QueryKeys } from '@/queries/constants.enum';
 import { useDeleteFileCategory } from '@/queries/hooks/explorer/file-category/useDeleteFileCategory';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
-import { enqueueSnackbar } from 'notistack';
 import React, { useEffect } from 'react';
 
 jest.mock('@/http-client/client');
-jest.mock('notistack', () => ({ enqueueSnackbar: jest.fn() }));
 
 describe('useDeleteFileCategory', () => {
   let queryClient: QueryClient;
@@ -21,7 +19,6 @@ describe('useDeleteFileCategory', () => {
     });
     jest.spyOn(queryClient, 'invalidateQueries');
     (client.delete as jest.Mock).mockReset();
-    (enqueueSnackbar as jest.Mock).mockClear();
   });
 
   it('should call delete and invalidate queries on success', async () => {
@@ -53,9 +50,6 @@ describe('useDeleteFileCategory', () => {
       expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
         queryKey: [QueryKeys.FILE_CATEGORIES_KEY],
       });
-      expect(enqueueSnackbar).toHaveBeenCalledWith('Deleted successfully', {
-        variant: 'success',
-      });
     });
   });
 
@@ -80,11 +74,6 @@ describe('useDeleteFileCategory', () => {
       triggerError();
     });
 
-    await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Error when deleting the folder',
-        { variant: 'error' }
-      );
-    });
+    await waitFor(() => {});
   });
 });

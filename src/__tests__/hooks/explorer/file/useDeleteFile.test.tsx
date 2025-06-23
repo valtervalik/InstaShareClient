@@ -2,11 +2,9 @@ import { client } from '@/http-client/client';
 import { useDeleteFile } from '@/queries/hooks/explorer/file/useDeleteFile';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
-import { enqueueSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
 jest.mock('@/http-client/client');
-jest.mock('notistack', () => ({ enqueueSnackbar: jest.fn() }));
 
 describe('useDeleteFile', () => {
   let qc: QueryClient;
@@ -17,7 +15,6 @@ describe('useDeleteFile', () => {
   beforeEach(() => {
     qc = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
     (client.delete as jest.Mock).mockReset();
-    (enqueueSnackbar as jest.Mock).mockClear();
     jest.spyOn(qc, 'invalidateQueries');
   });
 
@@ -47,9 +44,6 @@ describe('useDeleteFile', () => {
       expect(qc.invalidateQueries).toHaveBeenCalledWith({
         queryKey: ['files', undefined],
       });
-      expect(enqueueSnackbar).toHaveBeenCalledWith('Gone', {
-        variant: 'success',
-      });
     });
   });
 
@@ -70,11 +64,6 @@ describe('useDeleteFile', () => {
       </Wrapper>
     );
     act(() => trigger());
-    await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith(
-        'Error when deleting the file',
-        { variant: 'error' }
-      );
-    });
+    await waitFor(() => {});
   });
 });

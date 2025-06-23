@@ -15,9 +15,7 @@ const renderWithCreateRoot = (
 };
 
 // Mock Next.js router
+const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: mockPush }),
 }));
-
-// Mock notistack enqueueSnackbar
-jest.mock('notistack', () => ({ enqueueSnackbar: jest.fn() }));

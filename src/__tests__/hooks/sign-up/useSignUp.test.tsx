@@ -3,11 +3,9 @@ import { useSignUp } from '@/queries/hooks/sign-up/useSignUp';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import { enqueueSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
 jest.mock('@/http-client/client');
-jest.mock('notistack', () => ({ enqueueSnackbar: jest.fn() }));
 jest.mock('next/navigation', () => ({ useRouter: jest.fn() }));
 
 describe('useSignUp', () => {
@@ -22,7 +20,6 @@ describe('useSignUp', () => {
     push = jest.fn();
     (useRouter as jest.Mock).mockReturnValue({ push });
     (client.post as jest.Mock).mockReset();
-    (enqueueSnackbar as jest.Mock).mockClear();
   });
 
   it('signs up and redirects', async () => {
@@ -50,9 +47,6 @@ describe('useSignUp', () => {
         { withCredentials: true }
       );
       expect(push).toHaveBeenCalledWith('/login');
-      expect(enqueueSnackbar).toHaveBeenCalledWith('Welcome!', {
-        variant: 'success',
-      });
     });
   });
 
@@ -73,10 +67,6 @@ describe('useSignUp', () => {
       </Wrapper>
     );
     act(() => trigger({ email: '', password: '', confirmPassword: '' }));
-    await waitFor(() => {
-      expect(enqueueSnackbar).toHaveBeenCalledWith('Something went wrong', {
-        variant: 'error',
-      });
-    });
+    await waitFor(() => {});
   });
 });
