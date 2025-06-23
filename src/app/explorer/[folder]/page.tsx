@@ -31,13 +31,14 @@ const FolderPage = () => {
   const setSession = useSessionStore((state) => state.setSession);
   const fileCategory = useFileCategoryStore((state) => state.fileCategory);
   const deleteCategory = useDeleteFileCategory(fileCategory?._id || '');
+  const token = useSessionStore((state) => state.token);
 
   const isMobile = useIsMobile();
   const router = useRouter();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const eventSource = new EventSource(`${API_URL}/files/sse`);
+    const eventSource = new EventSource(`${API_URL}/files/sse?token=${token}`);
 
     eventSource.onmessage = async ({ data }) => {
       await Promise.all([
@@ -54,7 +55,8 @@ const FolderPage = () => {
     };
 
     eventSource.onerror = (error) => {
-      console.error('EventSource failed:', error);
+      toast.error('EventSource error');
+      console.log(error);
     };
 
     return () => {
